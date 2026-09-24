@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — MC Économie</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="dash-body">
+  <header class="topbar">
+    <a class="brand" href="/dashboard.html">⛏️ MC Économie</a>
+    <div class="top-actions">
+      <button id="bell" class="bell" title="Notifications">🔔<span id="bell-count" class="badge" hidden>0</span></button>
+      <span id="who" class="who"></span>
+      <button id="logout" class="btn ghost small">Déconnexion</button>
+    </div>
+  </header>
+
+  <nav class="tabs-nav" id="tabs-nav">
+    <button class="tab active" data-tab="orders">📦 Commandes</button>
+    <button class="tab" data-tab="trades">🔁 Échanges</button>
+    <button class="tab" data-tab="public">🌍 Coordonnées publiques</button>
+    <button class="tab" data-tab="private">🔒 Mes coordonnées</button>
+    <button class="tab" data-tab="chat">💬 Chat &amp; Vocal</button>
+  </nav>
+
+  <!-- ============ COMMANDES ============ -->
+  <section id="tab-orders" class="tab-panel">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Nouvelle commande</h2>
+        <form id="order-form">
+          <label>Destinataire
+            <select id="order-provider" required></select>
+          </label>
+          <label>Type
+            <select id="order-type">
+              <option value="service">🛠️ Service</option>
+              <option value="objet">📦 Objet</option>
+            </select>
+          </label>
+          <div id="order-objet-fields" hidden>
+            <label>Nom de l'objet
+              <input type="text" id="order-item" placeholder="ex : diamant" />
+            </label>
+            <label>Quantité
+              <input type="number" id="order-qty" min="1" max="100000" value="1" />
+            </label>
+          </div>
+          <label>Description
+            <textarea id="order-desc" rows="3" required placeholder="ex : construire ma base en pierre, 3 stacks de cobble..."></textarea>
+          </label>
+          <button type="submit" class="btn primary">Envoyer la commande</button>
+          <p class="msg" id="order-msg" hidden></p>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Reçues <span class="count" id="c-rec"></span></h2>
+        <div id="orders-received" class="list"></div>
+        <h2>Envoyées <span class="count" id="c-sent"></span></h2>
+        <div id="orders-sent" class="list"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Historique des commandes terminées</h2>
+      <div id="orders-history" class="list"></div>
+    </div>
+  </section>
+
+  <!-- ============ ÉCHANGES ============ -->
+  <section id="tab-trades" class="tab-panel" hidden>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Proposer un échange</h2>
+        <form id="trade-form">
+          <label>Avec
+            <select id="trade-partner" required></select>
+          </label>
+
+          <fieldset>
+            <legend>Ton offre</legend>
+            <label>Type
+              <select id="ta-type">
+                <option value="objet">📦 Objet</option>
+                <option value="service">🛠️ Service</option>
+              </select>
+            </label>
+            <div id="ta-objet" hidden>
+              <label>Objet <input type="text" id="ta-item" placeholder="ex : elytra" /></label>
+              <label>Quantité <input type="number" id="ta-qty" min="1" max="100000" value="1" /></label>
+            </div>
+            <div id="ta-service" hidden>
+              <label>Description <textarea id="ta-desc" rows="2" placeholder="ex : j'enchante 3 armures en protection IV"></textarea></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Ce que tu demandes en retour</legend>
+            <label>Type
+              <select id="tb-type">
+                <option value="objet">📦 Objet</option>
+                <option value="service">🛠️ Service</option>
+              </select>
+            </label>
+            <div id="tb-objet" hidden>
+              <label>Objet <input type="text" id="tb-item" placeholder="ex : netherite ingot" /></label>
+              <label>Quantité <input type="number" id="tb-qty" min="1" max="100000" value="1" /></label>
+            </div>
+            <div id="tb-service" hidden>
+              <label>Description <textarea id="tb-desc" rows="2" placeholder="ex : tu me construis un portail"></textarea></label>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn primary">Proposer l'échange</button>
+          <p class="msg" id="trade-msg" hidden></p>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Reçus <span class="count" id="c-trec"></span></h2>
+        <div id="trades-received" class="list"></div>
+        <h2>Envoyés <span class="count" id="c-tsent"></span></h2>
+        <div id="trades-sent" class="list"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Historique des échanges terminés</h2>
+      <div id="trades-history" class="list"></div>
+    </div>
+  </section>
+
+  <!-- ============ COORDONNÉES PUBLIQUES ============ -->
+  <section id="tab-public" class="tab-panel" hidden>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Publier une coordonnée publique</h2>
+        <form id="pub-form">
+          <label>Titre <input type="text" id="pub-title" required maxlength="100" placeholder="ex : Ferme à squelettes" /></label>
+          <label>Description <textarea id="pub-desc" rows="2" maxlength="500"></textarea></label>
+          <div class="row3">
+            <label>X <input type="number" id="pub-x" required step="any" /></label>
+            <label>Y <input type="number" id="pub-y" value="64" step="1" min="-64" max="320" /></label>
+            <label>Z <input type="number" id="pub-z" required step="any" /></label>
+          </div>
+          <label>Dimension
+            <select id="pub-dim">
+              <option value="overworld">Overworld</option>
+              <option value="nether">Nether</option>
+              <option value="end">End</option>
+            </select>
+          </label>
+          <button type="submit" class="btn primary">Publier</button>
+          <p class="msg" id="pub-msg" hidden></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Toutes les coordonnées publiques</h2>
+        <div id="pub-list" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COORDONNÉES PRIVÉES ============ -->
+  <section id="tab-private" class="tab-panel" hidden>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Ajouter une coordonnée privée</h2>
+        <form id="priv-form">
+          <label>Titre <input type="text" id="priv-title" required maxlength="100" placeholder="ex : Coffre secret /lex" /></label>
+          <label>Description <textarea id="priv-desc" rows="2" maxlength="500"></textarea></label>
+          <div class="row3">
+            <label>X <input type="number" id="priv-x" required step="any" /></label>
+            <label>Y <input type="number" id="priv-y" value="64" step="1" min="-64" max="320" /></label>
+            <label>Z <input type="number" id="priv-z" required step="any" /></label>
+          </div>
+          <label>Dimension
+            <select id="priv-dim">
+              <option value="overworld">Overworld</option>
+              <option value="nether">Nether</option>
+              <option value="end">End</option>
+            </select>
+          </label>
+          <button type="submit" class="btn primary">Ajouter</button>
+          <p class="msg" id="priv-msg" hidden></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Mes coordonnées privées</h2>
+        <div id="priv-list" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAT & VOCAL ============ -->
+  <section id="tab-chat" class="tab-panel" hidden>
+    <div class="grid-2 chat-grid">
+      <div class="card">
+        <h2>💬 Chat de la communauté</h2>
+        <div class="chat-header">
+          <span id="ws-status" class="conn-dot off">🔴 déconnecté</span>
+          <span class="muted small-text"><span id="online-count">0</span> joueur(s) en ligne</span>
+        </div>
+        <div id="chat-messages" class="chat-box"></div>
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-input" maxlength="500" placeholder="Ton message…" autocomplete="off" disabled />
+          <button type="submit" class="btn primary">Envoyer</button>
+        </form>
+        <p class="msg" id="chat-msg" hidden></p>
+      </div>
+
+      <div class="card">
+        <h2>🔊 Chat vocal</h2>
+        <p class="muted small-text">
+          Son en direct entre navigateurs (WebRTC). Autorise le micro quand le navigateur le demande.
+        </p>
+        <div class="voice-controls">
+          <input type="text" id="voice-room-name" placeholder="Nom du salon (défaut : general)" maxlength="32" />
+          <button id="voice-join" class="btn ok">Rejoindre</button>
+          <button id="voice-leave" class="btn danger" disabled>Quitter</button>
+          <button id="voice-mute" class="btn" disabled>🎙️ Couper le micro</button>
+        </div>
+        <p class="msg" id="voice-msg" hidden></p>
+        <p class="muted small-text" id="voice-room-current">Aucun salon</p>
+
+        <h3 class="sub-h">Dans le salon</h3>
+        <div id="voice-members" class="voice-members"></div>
+
+        <h3 class="sub-h">Salons actifs</h3>
+        <div id="voice-rooms" class="voice-rooms"></div>
+
+        <div id="voice-log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panneau de notifications -->
+  <aside id="notif-panel" class="notif-panel" hidden>
+    <div class="notif-head">
+      <strong>Notifications</strong>
+      <button id="notif-clear" class="btn ghost small">Tout marquer lu</button>
+    </div>
+    <div id="notif-list" class="notif-list"></div>
+    <div class="notif-live">
+      <label><input type="checkbox" id="notif-live" checked /> Rafraîchir automatiquement</label>
+    </div>
+  </aside>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>

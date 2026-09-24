@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC Économie — Commandes &amp; échanges entre joueurs</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="auth-body">
+  <main class="auth-card">
+    <h1>⛏️ MC Économie</h1>
+    <p class="subtitle">Commandes, échanges et coordonnées entre joueurs Minecraft</p>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-login">Connexion</button>
+      <button class="tab" id="tab-register">Créer un compte</button>
+    </div>
+
+    <!-- Connexion -->
+    <form id="form-login" class="auth-form">
+      <label>Pseudo
+        <input type="text" id="login-username" required minlength="3" maxlength="20" autocomplete="username" />
+      </label>
+      <label>Mot de passe
+        <input type="password" id="login-password" required minlength="6" autocomplete="current-password" />
+      </label>
+      <button type="submit" class="btn primary">Se connecter</button>
+      <p class="msg" id="login-msg" hidden></p>
+    </form>
+
+    <!-- Inscription -->
+    <form id="form-register" class="auth-form" hidden>
+      <label>Pseudo (3–20 car., lettres/chiffres/_)
+        <input type="text" id="reg-username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="username" />
+      </label>
+      <label>Pseudo Minecraft (optionnel)
+        <input type="text" id="reg-mc" maxlength="20" placeholder="ex : Steve_Builder" />
+      </label>
+      <label>Mot de passe (6 car. minimum)
+        <input type="password" id="reg-password" required minlength="6" autocomplete="new-password" />
+      </label>
+      <button type="submit" class="btn primary">Créer mon compte</button>
+      <p class="msg" id="register-msg" hidden></p>
+    </form>
+
+    <p class="foot">Déjà connecté ailleurs ? <a href="/dashboard.html">Ouvrir le dashboard</a></p>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+</html>
